@@ -2,15 +2,13 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-calendar';
+import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { useCalendarEvents } from '@/hooks/use-calendar';
-import { useUpdateMeetingTime } from '@/hooks/use-meetings';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
@@ -19,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ChevronLeft, ChevronRight, Plus, Calendar, Video, Clock, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Video, Clock } from 'lucide-react';
 import Link from 'next/link';
 import type { CalendarEvent } from '@/lib/types';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -45,7 +43,6 @@ interface CalendarEventDisplay {
 
 export default function CalendarPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<ViewType>('month');
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
@@ -61,7 +58,6 @@ export default function CalendarPage() {
   }, [currentDate]);
 
   const { data: events, isLoading } = useCalendarEvents(start, end);
-  const updateMeetingTime = useUpdateMeetingTime();
 
   const calendarEvents: CalendarEventDisplay[] = useMemo(() => {
     if (!events) return [];
@@ -94,47 +90,6 @@ export default function CalendarPage() {
       router.push(`/meetings/new?date=${encodeURIComponent(dateStr)}`);
     },
     [router]
-  );
-
-  const handleEventDrop = useCallback(
-    async ({
-      event,
-      start,
-      end,
-    }: {
-      event: CalendarEventDisplay;
-      start: Date;
-      end: Date;
-    }) => {
-      if (event.resource.source !== 'meetme') {
-        toast({
-          title: 'Cannot move',
-          description: 'Google Calendar events cannot be moved from here.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      try {
-        await updateMeetingTime.mutateAsync({
-          id: event.id,
-          startTime: start.toISOString(),
-          endTime: end.toISOString(),
-        });
-        toast({
-          title: 'Meeting updated',
-          description: 'The meeting time has been changed.',
-          variant: 'success',
-        });
-      } catch {
-        toast({
-          title: 'Error',
-          description: 'Failed to update meeting time.',
-          variant: 'destructive',
-        });
-      }
-    },
-    [updateMeetingTime, toast]
   );
 
   const eventStyleGetter = useCallback((event: CalendarEventDisplay) => {
@@ -199,9 +154,7 @@ export default function CalendarPage() {
               onNavigate={handleNavigate}
               onSelectEvent={handleSelectEvent}
               onSelectSlot={handleSelectSlot}
-              onEventDrop={handleEventDrop}
               selectable
-              resizable={false}
               eventPropGetter={eventStyleGetter}
               views={['month', 'week', 'day']}
               components={{
