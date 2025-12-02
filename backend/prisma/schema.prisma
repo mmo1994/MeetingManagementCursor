@@ -1,0 +1,207 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ParticipantStatus {
+  INVITED
+  ACCEPTED
+  DECLINED
+  TENTATIVE
+}
+
+enum ThemePreference {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum NotificationType {
+  MEETING_CREATED
+  MEETING_UPDATED
+  MEETING_CANCELLED
+  MEETING_INVITATION
+  MEETING_REMINDER
+  PARTICIPANT_RESPONDED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  timezone     String   @default("UTC")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  createdMeetings     Meeting[]            @relation("MeetingCreator")
+  participations      MeetingParticipant[]
+  notifications       Notification[]
+  settings            UserSettings?
+  googleOAuthToken    GoogleOAuthToken?
+  refreshTokens       RefreshToken[]
+  pushSubscriptions   PushSubscription[]
+
+  @@index([email])
+}
+
+model Meeting {
+  id                    String   @id @default(cuid())
+  title                 String
+  description           String?
+  startTime             DateTime
+  endTime               DateTime
+  timezone              String   @default("UTC")
+  videoLink             String?
+  isCancelled           Boolean  @default(false)
+  googleCalendarEventId String?
+  reminderMinutesBefore Int[]    @default([15])
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  createdByUserId String
+  createdBy       User                 @relation("MeetingCreator", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  participants    MeetingParticipant[]
+  notifications   Notification[]
+  reminders       MeetingReminder[]
+
+  @@index([createdByUserId])
+  @@index([startTime])
+  @@index([isCancelled])
+}
+
+model MeetingParticipant {
+  id        String            @id @default(cuid())
+  email     String
+  status    ParticipantStatus @default(INVITED)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relations
+  meetingId String
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([meetingId, email])
+  @@index([meetingId])
+  @@index([userId])
+  @@index([email])
+}
+
+model MeetingReminder {
+  id              String   @id @default(cuid())
+  minutesBefore   Int
+  scheduledFor    DateTime
+  sentAt          DateTime?
+  emailSent       Boolean  @default(false)
+  pushSent        Boolean  @default(false)
+  inAppCreated    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  meetingId String
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@index([scheduledFor])
+  @@index([meetingId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  // Relations
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  relatedMeetingId String?
+  relatedMeeting   Meeting? @relation(fields: [relatedMeetingId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model UserSettings {
+  id                        String          @id @default(cuid())
+  emailNotificationsEnabled Boolean         @default(true)
+  pushNotificationsEnabled  Boolean         @default(true)
+  inAppNotificationsEnabled Boolean         @default(true)
+  themePreference           ThemePreference @default(SYSTEM)
+  createdAt                 DateTime        @default(now())
+  updatedAt                 DateTime        @updatedAt
+
+  // Relations
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GoogleOAuthToken {
+  id           String   @id @default(cuid())
+  accessToken  String
+  refreshToken String?
+  expiryDate   DateTime?
+  scopes       String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  userId    String?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
