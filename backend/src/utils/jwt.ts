@@ -1,19 +1,34 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { JWTPayload } from '../types';
 
+// Convert expiry string to seconds
+function expiryToSeconds(expiry: string): number {
+  const match = expiry.match(/^(\d+)([smhd])$/);
+  if (!match) return 900; // default 15 minutes
+  
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+  
+  switch (unit) {
+    case 's': return value;
+    case 'm': return value * 60;
+    case 'h': return value * 60 * 60;
+    case 'd': return value * 24 * 60 * 60;
+    default: return 900;
+  }
+}
+
 export function generateAccessToken(payload: JWTPayload): string {
-  const options: SignOptions = {
-    expiresIn: config.jwt.accessExpiry as string,
-  };
-  return jwt.sign(payload, config.jwt.secret, options);
+  return jwt.sign(payload, config.jwt.secret, {
+    expiresIn: expiryToSeconds(config.jwt.accessExpiry),
+  });
 }
 
 export function generateRefreshToken(payload: JWTPayload): string {
-  const options: SignOptions = {
-    expiresIn: config.jwt.refreshExpiry as string,
-  };
-  return jwt.sign(payload, config.jwt.refreshSecret, options);
+  return jwt.sign(payload, config.jwt.refreshSecret, {
+    expiresIn: expiryToSeconds(config.jwt.refreshExpiry),
+  });
 }
 
 export function verifyAccessToken(token: string): JWTPayload {
