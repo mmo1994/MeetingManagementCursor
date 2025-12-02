@@ -24,10 +24,10 @@ import {
   LogOut,
   Menu,
   Moon,
-  Phone,
   Plus,
   Settings,
   Sun,
+  Video,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -36,7 +36,7 @@ import { formatDate } from '@/lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Meetings', href: '/meetings', icon: Phone },
+  { name: 'Meetings', href: '/meetings', icon: Video },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
 ];
 
