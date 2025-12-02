@@ -36,7 +36,7 @@ export class PushController {
     }
   }
   
-  async getPublicKey(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async getPublicKey(_req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const publicKey = pushService.getPublicKey();
       

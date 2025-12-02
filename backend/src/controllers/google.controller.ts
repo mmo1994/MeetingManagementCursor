@@ -24,7 +24,7 @@ export class GoogleController {
     }
   }
   
-  async callback(req: Request, res: Response, next: NextFunction) {
+  async callback(req: Request, res: Response, _next: NextFunction) {
     try {
       const { code, state, error } = req.query;
       

@@ -1,17 +1,19 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { config } from '../config';
 import { JWTPayload } from '../types';
 
 export function generateAccessToken(payload: JWTPayload): string {
-  return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.accessExpiry,
-  });
+  const options: SignOptions = {
+    expiresIn: config.jwt.accessExpiry as string,
+  };
+  return jwt.sign(payload, config.jwt.secret, options);
 }
 
 export function generateRefreshToken(payload: JWTPayload): string {
-  return jwt.sign(payload, config.jwt.refreshSecret, {
-    expiresIn: config.jwt.refreshExpiry,
-  });
+  const options: SignOptions = {
+    expiresIn: config.jwt.refreshExpiry as string,
+  };
+  return jwt.sign(payload, config.jwt.refreshSecret, options);
 }
 
 export function verifyAccessToken(token: string): JWTPayload {

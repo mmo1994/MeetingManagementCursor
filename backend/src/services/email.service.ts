@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import { config } from '../config';
-import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 interface MeetingEmailData {

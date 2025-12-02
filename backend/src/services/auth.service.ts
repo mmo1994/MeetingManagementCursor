@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import prisma from '../config/prisma';
 import { hashPassword, verifyPassword } from '../utils/password';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken, getRefreshTokenExpiry } from '../utils/jwt';

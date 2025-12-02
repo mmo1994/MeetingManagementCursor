@@ -40,7 +40,7 @@ export class SettingsService {
     input: UpdateSettingsInput,
     req?: Request
   ): Promise<UserWithSettings> {
-    const user = await this.get(userId);
+    await this.get(userId); // Verify user exists
     
     // Update user fields
     if (input.name || input.timezone) {
