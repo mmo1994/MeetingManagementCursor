@@ -1,0 +1,25 @@
+{
+  "name": "meetme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MeetMe - Meeting Management Application",
+  "scripts": {
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "db:generate": "cd prisma && npx prisma generate",
+    "db:migrate": "cd prisma && npx prisma migrate dev",
+    "db:migrate:deploy": "cd prisma && npx prisma migrate deploy",
+    "db:seed": "cd prisma && npx prisma db seed",
+    "db:studio": "cd prisma && npx prisma studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build"
+  },
+  "keywords": ["meeting", "calendar", "scheduling"],
+  "author": "",
+  "license": "MIT"
+}
+

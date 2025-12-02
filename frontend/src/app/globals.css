@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 24.6 95% 53.1%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 60 9.1% 97.8%;
+    --card: 20 14.3% 4.1%;
+    --card-foreground: 60 9.1% 97.8%;
+    --popover: 20 14.3% 4.1%;
+    --popover-foreground: 60 9.1% 97.8%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 60 9.1% 97.8%;
+    --secondary: 12 6.5% 15.1%;
+    --secondary-foreground: 60 9.1% 97.8%;
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 60 9.1% 97.8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 60 9.1% 97.8%;
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 24.6 95% 53.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* React Big Calendar Styles */
+.rbc-calendar {
+  @apply bg-card rounded-lg border;
+}
+
+.rbc-header {
+  @apply py-2 font-medium text-muted-foreground border-b;
+}
+
+.rbc-month-view {
+  @apply border-0;
+}
+
+.rbc-day-bg {
+  @apply border-l border-border;
+}
+
+.rbc-day-bg:first-child {
+  @apply border-l-0;
+}
+
+.rbc-off-range-bg {
+  @apply bg-muted/30;
+}
+
+.rbc-today {
+  @apply bg-primary/10;
+}
+
+.rbc-event {
+  @apply bg-primary text-primary-foreground rounded px-2 py-1 text-sm;
+}
+
+.rbc-event.rbc-selected {
+  @apply bg-primary/80;
+}
+
+.rbc-event-content {
+  @apply truncate;
+}
+
+.rbc-toolbar {
+  @apply flex flex-wrap gap-2 mb-4 justify-between items-center;
+}
+
+.rbc-toolbar button {
+  @apply px-3 py-1.5 rounded-md text-sm font-medium transition-colors;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+}
+
+.rbc-toolbar button.rbc-active {
+  @apply bg-primary text-primary-foreground;
+}
+
+.rbc-toolbar-label {
+  @apply text-lg font-semibold;
+}
+
+.rbc-month-row {
+  @apply border-b border-border;
+}
+
+.rbc-month-row:last-child {
+  @apply border-b-0;
+}
+
+.rbc-date-cell {
+  @apply p-1 text-right text-sm;
+}
+
+.rbc-date-cell.rbc-now {
+  @apply font-bold text-primary;
+}
+
+.rbc-time-view {
+  @apply border-0;
+}
+
+.rbc-time-header {
+  @apply border-b;
+}
+
+.rbc-time-content {
+  @apply border-t-0;
+}
+
+.rbc-timeslot-group {
+  @apply border-b border-border;
+}
+
+.rbc-time-slot {
+  @apply border-t border-border;
+}
+
+.rbc-current-time-indicator {
+  @apply bg-destructive h-0.5;
+}
+
+.dark .rbc-calendar {
+  @apply bg-card;
+}
+
+.dark .rbc-header,
+.dark .rbc-time-header-cell {
+  @apply text-foreground;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+}
+
+/* Animation classes */
+.animate-in {
+  animation: fade-in 0.3s ease-out, slide-in-from-top 0.3s ease-out;
+}
+
+/* Meeting status colors */
+.meeting-cancelled {
+  @apply opacity-60 line-through;
+}
+
+.meeting-today {
+  @apply border-l-4 border-l-primary;
+}
+
+.meeting-past {
+  @apply opacity-70;
+}
+
